@@ -52,6 +52,26 @@ namespace Basket.Add.Controllers
             return Json(new { result = 1, message = $"Başarılı",countProduct=$"{productDetailLists.productDetails.Count()}" });
         }
 
+        [HttpPost]
+        public ActionResult DeleteBasketItem(int itemId)
+        {
+            int deleteItem = itemId;
+
+            ProductDetailList productDetailList = new ProductDetailList();
+
+            if (_memoryCache.Get<ProductDetailList>("Basket") != null)
+            {
+                productDetailList = _memoryCache.Get<ProductDetailList>("Basket");
+            }
+            
+            productDetailList.productDetails.RemoveAll(x => x.id == deleteItem);
+            _memoryCache.Remove("Basket");
+
+            _memoryCache.Set<ProductDetailList>("Basket", productDetailList);
+
+            return Json(new { result = 1, message = $"Başarılı", countProduct = $"{productDetailList.productDetails.Count()}" });
+        }
+
         [HttpGet]
         public ActionResult BasketDetail()
         {
